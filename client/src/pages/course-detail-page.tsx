@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Clock, Signal, Play, Video, File, Check, Lock } from "lucide-react";
+import { Star, Clock, Signal, Play, Video, File, Check, Lock, Users } from "lucide-react";
 
 export default function CourseDetailPage() {
   const [, params] = useRoute("/courses/:id");
@@ -97,6 +97,7 @@ export default function CourseDetailPage() {
   }
 
   const isEnrolled = !!enrollment;
+  const isInstructor = user?.id === course.instructorId;
 
   return (
     <PageLayout showSidebar={false}>
@@ -106,14 +107,24 @@ export default function CourseDetailPage() {
           <div className="flex flex-col md:flex-row gap-8">
             {/* Course Info */}
             <div className="md:w-2/3">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded">
-                  {course.category}
-                </span>
-                {course.subcategory && (
-                  <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded">
-                    {course.subcategory}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded">
+                    {course.category}
                   </span>
+                  {course.subcategory && (
+                    <span className="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-0.5 rounded">
+                      {course.subcategory}
+                    </span>
+                  )}
+                </div>
+                
+                {isInstructor && (
+                  <Link href={`/courses/manage/${course.id}`}>
+                    <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+                      Manage Course
+                    </Button>
+                  </Link>
                 )}
               </div>
 

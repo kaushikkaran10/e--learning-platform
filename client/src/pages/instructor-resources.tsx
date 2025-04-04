@@ -17,28 +17,28 @@ export default function InstructorResources() {
         </div>
 
         <Tabs defaultValue="guidelines" className="space-y-6">
-          <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto">
-            <TabsTrigger value="guidelines" className="py-2 flex flex-col items-center gap-1">
+          <TabsList className="flex flex-wrap h-auto">
+            <TabsTrigger value="guidelines" className="py-2 flex items-center gap-1">
               <Book className="h-4 w-4" />
               <span>Guidelines</span>
             </TabsTrigger>
-            <TabsTrigger value="course-creation" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="course-creation" className="py-2 flex items-center gap-1">
               <Lightbulb className="h-4 w-4" />
               <span>Course Creation</span>
             </TabsTrigger>
-            <TabsTrigger value="grading" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="grading" className="py-2 flex items-center gap-1">
               <CheckCircle className="h-4 w-4" />
               <span>Grading</span>
             </TabsTrigger>
-            <TabsTrigger value="media" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="media" className="py-2 flex items-center gap-1">
               <Video className="h-4 w-4" />
               <span>Video & Media</span>
             </TabsTrigger>
-            <TabsTrigger value="best-practices" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="best-practices" className="py-2 flex items-center gap-1">
               <GraduationCap className="h-4 w-4" />
               <span>Best Practices</span>
             </TabsTrigger>
-            <TabsTrigger value="help" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="help" className="py-2 flex items-center gap-1">
               <HelpCircle className="h-4 w-4" />
               <span>Help & Support</span>
             </TabsTrigger>

@@ -20,6 +20,7 @@ import CalendarPage from "@/pages/calendar-page";
 import StudentResources from "@/pages/student-resources";
 import InstructorResources from "@/pages/instructor-resources";
 import CourseCategories from "@/pages/course-categories";
+import CourseManagePage from "@/pages/course-manage-page";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/student-resources" component={StudentResources} />
       <Route path="/instructor-resources" component={InstructorResources} />
       <Route path="/course-categories" component={CourseCategories} />
+      <ProtectedRoute path="/courses/manage/:id" component={CourseManagePage} />
       <Route path="/ui/spinners" component={SpinnerDemoPage} />
       <Route component={NotFound} />
     </Switch>

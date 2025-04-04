@@ -17,28 +17,28 @@ export default function StudentResources() {
         </div>
 
         <Tabs defaultValue="study-materials" className="space-y-6">
-          <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto">
-            <TabsTrigger value="study-materials" className="py-2 flex flex-col items-center gap-1">
+          <TabsList className="flex flex-wrap h-auto">
+            <TabsTrigger value="study-materials" className="py-2 flex items-center gap-1">
               <BookOpen className="h-4 w-4" />
               <span>Study Materials</span>
             </TabsTrigger>
-            <TabsTrigger value="tech-tools" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="tech-tools" className="py-2 flex items-center gap-1">
               <Laptop className="h-4 w-4" />
               <span>Tech & Tools</span>
             </TabsTrigger>
-            <TabsTrigger value="academic-support" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="academic-support" className="py-2 flex items-center gap-1">
               <FileText className="h-4 w-4" />
               <span>Academic Support</span>
             </TabsTrigger>
-            <TabsTrigger value="exam-help" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="exam-help" className="py-2 flex items-center gap-1">
               <PenTool className="h-4 w-4" />
               <span>Assignments & Exams</span>
             </TabsTrigger>
-            <TabsTrigger value="career" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="career" className="py-2 flex items-center gap-1">
               <GraduationCap className="h-4 w-4" />
               <span>Career Development</span>
             </TabsTrigger>
-            <TabsTrigger value="faq" className="py-2 flex flex-col items-center gap-1">
+            <TabsTrigger value="faq" className="py-2 flex items-center gap-1">
               <HelpCircle className="h-4 w-4" />
               <span>FAQ & Support</span>
             </TabsTrigger>
