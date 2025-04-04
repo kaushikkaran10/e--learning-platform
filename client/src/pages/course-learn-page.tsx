@@ -317,7 +317,7 @@ export default function CourseLearnPage() {
               {/* Video Player */}
               <div className="flex-1 min-h-0">
                 <VideoPlayer 
-                  videoUrl={currentLecture.videoUrl} 
+                  src={currentLecture.videoUrl} 
                   title={currentLecture.title}
                   onComplete={handleLectureComplete}
                 />
@@ -342,10 +342,19 @@ export default function CourseLearnPage() {
                 
                 <div className="flex items-center justify-between pt-2 border-t">
                   <div className="flex gap-3">
-                    <Button variant="outline" size="sm">
-                      <Download className="mr-2 h-4 w-4" />
-                      Resources
-                    </Button>
+                    {currentLecture.fileUrl ? (
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={currentLecture.fileUrl} target="_blank" rel="noopener noreferrer">
+                          <Download className="mr-2 h-4 w-4" />
+                          Download Resources
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button variant="outline" size="sm" disabled>
+                        <Download className="mr-2 h-4 w-4" />
+                        No Resources
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm">
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Discussion

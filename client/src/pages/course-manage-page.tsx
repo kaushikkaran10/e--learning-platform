@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertLectureSchema, insertSectionSchema, insertQuizQuestionSchema } from "@shared/schema";
 import PageLayout from "@/components/layout/page-layout";
+import FileUpload from "@/components/course/file-upload";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -709,11 +710,29 @@ export default function CourseManagePage() {
                                 name="videoUrl"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Video URL (optional)</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="https://example.com/video.mp4" {...field} value={field.value || ''} />
-                                    </FormControl>
-                                    <FormDescription>Link to your video lecture</FormDescription>
+                                    <FormLabel>Video Lecture</FormLabel>
+                                    <div className="space-y-4">
+                                      <div>
+                                        <FileUpload 
+                                          endpoint="video"
+                                          label="Upload Video File"
+                                          onUploadComplete={(fileUrl) => {
+                                            field.onChange(fileUrl);
+                                            lectureForm.setValue('videoUrl', fileUrl);
+                                          }}
+                                        />
+                                      </div>
+                                      <div className="- mt-2">
+                                        <FormLabel className="text-sm font-normal">OR enter a URL</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            placeholder="https://example.com/video.mp4" 
+                                            {...field} 
+                                            value={field.value || ''} 
+                                          />
+                                        </FormControl>
+                                      </div>
+                                    </div>
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -724,11 +743,30 @@ export default function CourseManagePage() {
                                 name="fileUrl"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Resources/PDF URL (optional)</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="https://example.com/resources.pdf" {...field} value={field.value || ''} />
-                                    </FormControl>
-                                    <FormDescription>Additional materials for this lecture</FormDescription>
+                                    <FormLabel>Lecture Resources/Notes</FormLabel>
+                                    <div className="space-y-4">
+                                      <div>
+                                        <FileUpload 
+                                          endpoint="document"
+                                          label="Upload PDF/Document"
+                                          onUploadComplete={(fileUrl) => {
+                                            field.onChange(fileUrl);
+                                            lectureForm.setValue('fileUrl', fileUrl);
+                                          }}
+                                        />
+                                      </div>
+                                      <div className="- mt-2">
+                                        <FormLabel className="text-sm font-normal">OR enter a URL</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            placeholder="https://example.com/resources.pdf" 
+                                            {...field} 
+                                            value={field.value || ''} 
+                                          />
+                                        </FormControl>
+                                        <FormDescription className="text-xs">Additional materials for this lecture (PDF, docs, slides)</FormDescription>
+                                      </div>
+                                    </div>
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -963,11 +1001,30 @@ export default function CourseManagePage() {
                           name="fileUrl"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Instructions File URL (optional)</FormLabel>
-                              <FormControl>
-                                <Input placeholder="https://example.com/instructions.pdf" {...field} value={field.value || ''} />
-                              </FormControl>
-                              <FormDescription>Link to detailed assignment instructions or resources</FormDescription>
+                              <FormLabel>Assignment Instructions</FormLabel>
+                              <div className="space-y-4">
+                                <div>
+                                  <FileUpload 
+                                    endpoint="document"
+                                    label="Upload Instructions PDF"
+                                    onUploadComplete={(fileUrl) => {
+                                      field.onChange(fileUrl);
+                                      assignmentForm.setValue('fileUrl', fileUrl);
+                                    }}
+                                  />
+                                </div>
+                                <div className="- mt-2">
+                                  <FormLabel className="text-sm font-normal">OR enter a URL</FormLabel>
+                                  <FormControl>
+                                    <Input 
+                                      placeholder="https://example.com/instructions.pdf" 
+                                      {...field} 
+                                      value={field.value || ''} 
+                                    />
+                                  </FormControl>
+                                  <FormDescription className="text-xs">Detailed assignment instructions or resources</FormDescription>
+                                </div>
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}

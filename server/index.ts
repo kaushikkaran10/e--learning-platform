@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { storage } from "./storage";
+import { setupFileUpload } from "./upload";
 import { scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 
@@ -147,6 +148,9 @@ app.use((req, res, next) => {
 (async () => {
   // Seed initial data first
   await seedInitialData();
+  
+  // Setup file upload functionality
+  setupFileUpload(app);
   
   const server = await registerRoutes(app);
 
