@@ -17,6 +17,9 @@ import InstructorDashboard from "@/pages/instructor-dashboard";
 import SpinnerDemoPage from "@/pages/spinner-demo-page";
 import MessagingPage from "@/pages/messaging-page";
 import CalendarPage from "@/pages/calendar-page";
+import StudentResources from "@/pages/student-resources";
+import InstructorResources from "@/pages/instructor-resources";
+import CourseCategories from "@/pages/course-categories";
 
 function Router() {
   return (
@@ -30,6 +33,9 @@ function Router() {
       <ProtectedRoute path="/instructor/dashboard" component={InstructorDashboard} />
       <ProtectedRoute path="/messages" component={MessagingPage} />
       <ProtectedRoute path="/calendar" component={CalendarPage} />
+      <Route path="/student-resources" component={StudentResources} />
+      <Route path="/instructor-resources" component={InstructorResources} />
+      <Route path="/course-categories" component={CourseCategories} />
       <Route path="/ui/spinners" component={SpinnerDemoPage} />
       <Route component={NotFound} />
     </Switch>
