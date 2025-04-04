@@ -125,9 +125,14 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link href="/auth">
-              <Button>Sign In</Button>
-            </Link>
+            <div className="flex items-center space-x-3">
+              <Link href="/auth">
+                <Button variant="ghost">Log In</Button>
+              </Link>
+              <Link href="/auth?tab=register">
+                <Button size="lg" className="font-medium">Register</Button>
+              </Link>
+            </div>
           )}
         </nav>
 
