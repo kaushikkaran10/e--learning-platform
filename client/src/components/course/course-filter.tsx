@@ -32,9 +32,9 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
   const params = new URLSearchParams(search);
   
   const [searchTerm, setSearchTerm] = useState(params.get("search") || "");
-  const [selectedCategory, setSelectedCategory] = useState(params.get("category") || "");
-  const [selectedSubcategory, setSelectedSubcategory] = useState(params.get("subcategory") || "");
-  const [selectedLevel, setSelectedLevel] = useState(params.get("level") || "");
+  const [selectedCategory, setSelectedCategory] = useState(params.get("category") || "all");
+  const [selectedSubcategory, setSelectedSubcategory] = useState(params.get("subcategory") || "all-subcategories");
+  const [selectedLevel, setSelectedLevel] = useState(params.get("level") || "all-levels");
   const [priceRange, setPriceRange] = useState<number[]>([0, 100]);
   const [freeOnly, setFreeOnly] = useState(params.get("free") === "true");
 
@@ -54,9 +54,9 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
     const filters: Record<string, string | boolean | number[]> = {};
     
     if (searchTerm) filters.search = searchTerm;
-    if (selectedCategory) filters.category = selectedCategory;
-    if (selectedSubcategory) filters.subcategory = selectedSubcategory;
-    if (selectedLevel) filters.level = selectedLevel;
+    if (selectedCategory && selectedCategory !== "all") filters.category = selectedCategory;
+    if (selectedSubcategory && selectedSubcategory !== "all-subcategories") filters.subcategory = selectedSubcategory;
+    if (selectedLevel && selectedLevel !== "all-levels") filters.level = selectedLevel;
     if (freeOnly) filters.free = true;
     filters.priceRange = priceRange;
     
@@ -65,9 +65,9 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
     // Update URL with filter parameters
     const queryParams = new URLSearchParams();
     if (searchTerm) queryParams.set("search", searchTerm);
-    if (selectedCategory) queryParams.set("category", selectedCategory);
-    if (selectedSubcategory) queryParams.set("subcategory", selectedSubcategory);
-    if (selectedLevel) queryParams.set("level", selectedLevel);
+    if (selectedCategory && selectedCategory !== "all") queryParams.set("category", selectedCategory);
+    if (selectedSubcategory && selectedSubcategory !== "all-subcategories") queryParams.set("subcategory", selectedSubcategory);
+    if (selectedLevel && selectedLevel !== "all-levels") queryParams.set("level", selectedLevel);
     if (freeOnly) queryParams.set("free", "true");
     
     setLocation(`/courses?${queryParams.toString()}`);
@@ -75,9 +75,9 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
 
   const resetFilters = () => {
     setSearchTerm("");
-    setSelectedCategory("");
-    setSelectedSubcategory("");
-    setSelectedLevel("");
+    setSelectedCategory("all");
+    setSelectedSubcategory("all-subcategories");
+    setSelectedLevel("all-levels");
     setPriceRange([0, 100]);
     setFreeOnly(false);
     
@@ -114,7 +114,7 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category.name} value={category.name}>
                   {category.name}
@@ -124,7 +124,7 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
           </Select>
         </div>
         
-        {selectedCategory && (
+        {selectedCategory && selectedCategory !== "all" && (
           <div>
             <Label htmlFor="subcategory">Subcategory</Label>
             <Select value={selectedSubcategory} onValueChange={setSelectedSubcategory}>
@@ -132,7 +132,7 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
                 <SelectValue placeholder="All Subcategories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Subcategories</SelectItem>
+                <SelectItem value="all-subcategories">All Subcategories</SelectItem>
                 {getSubcategories().map(subcategory => (
                   <SelectItem key={subcategory} value={subcategory}>
                     {subcategory}
@@ -150,7 +150,7 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
               <SelectValue placeholder="All Levels" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Levels</SelectItem>
+              <SelectItem value="all-levels">All Levels</SelectItem>
               {levels.map(level => (
                 <SelectItem key={level} value={level}>
                   {level}
