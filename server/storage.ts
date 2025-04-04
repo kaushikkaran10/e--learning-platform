@@ -11,6 +11,9 @@ import {
   adminLogs,
   platformSettings,
   courseApprovals,
+  assignments,
+  submissions,
+  quizQuestions,
   type User, 
   type InsertUser, 
   type Course, 
@@ -30,7 +33,13 @@ import {
   type PlatformSetting,
   type InsertPlatformSetting,
   type CourseApproval,
-  type InsertCourseApproval
+  type InsertCourseApproval,
+  type Assignment,
+  type InsertAssignment,
+  type Submission,
+  type InsertSubmission,
+  type QuizQuestion,
+  type InsertQuizQuestion
 } from "@shared/schema";
 
 // Create a memory store type
@@ -95,6 +104,29 @@ export interface IStorage {
   updateCourseApproval(courseId: number, data: Partial<CourseApproval>): Promise<CourseApproval | undefined>;
   getCourseApprovals(status?: string): Promise<CourseApproval[]>;
   
+  // Assignment methods
+  getAssignment(id: number): Promise<Assignment | undefined>;
+  getAssignmentsByCourseId(courseId: number): Promise<Assignment[]>;
+  createAssignment(assignment: InsertAssignment): Promise<Assignment>;
+  updateAssignment(id: number, data: Partial<Assignment>): Promise<Assignment | undefined>;
+  deleteAssignment(id: number): Promise<boolean>;
+  
+  // Submission methods
+  getSubmission(id: number): Promise<Submission | undefined>;
+  getUserSubmissionForAssignment(userId: number, assignmentId: number): Promise<Submission | undefined>;
+  getSubmissionsByAssignmentId(assignmentId: number): Promise<Submission[]>;
+  getSubmissionsByUserId(userId: number): Promise<Submission[]>;
+  createSubmission(submission: InsertSubmission): Promise<Submission>;
+  updateSubmission(id: number, data: Partial<Submission>): Promise<Submission | undefined>;
+  gradeSubmission(id: number, grade: number, feedback: string, gradedBy: number): Promise<Submission | undefined>;
+  
+  // Quiz question methods
+  getQuizQuestion(id: number): Promise<QuizQuestion | undefined>;
+  getQuizQuestionsByAssignmentId(assignmentId: number): Promise<QuizQuestion[]>;
+  createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion>;
+  updateQuizQuestion(id: number, data: Partial<QuizQuestion>): Promise<QuizQuestion | undefined>;
+  deleteQuizQuestion(id: number): Promise<boolean>;
+  
   // Analytics
   getPlatformStats(): Promise<{
     totalUsers: number,
@@ -120,6 +152,9 @@ export class MemStorage implements IStorage {
   private adminLogs: Map<number, AdminLog>;
   private platformSettings: Map<number, PlatformSetting>;
   private courseApprovals: Map<number, CourseApproval>;
+  private assignments: Map<number, Assignment>;
+  private submissions: Map<number, Submission>;
+  private quizQuestions: Map<number, QuizQuestion>;
   
   private userIdCounter: number;
   private courseIdCounter: number;
@@ -131,6 +166,9 @@ export class MemStorage implements IStorage {
   private adminLogIdCounter: number;
   private platformSettingIdCounter: number;
   private courseApprovalIdCounter: number;
+  private assignmentIdCounter: number;
+  private submissionIdCounter: number;
+  private quizQuestionIdCounter: number;
   
   sessionStore: session.Store;
 
@@ -145,6 +183,9 @@ export class MemStorage implements IStorage {
     this.adminLogs = new Map();
     this.platformSettings = new Map();
     this.courseApprovals = new Map();
+    this.assignments = new Map();
+    this.submissions = new Map();
+    this.quizQuestions = new Map();
     
     this.userIdCounter = 1;
     this.courseIdCounter = 1;
@@ -156,18 +197,12 @@ export class MemStorage implements IStorage {
     this.adminLogIdCounter = 1;
     this.platformSettingIdCounter = 1;
     this.courseApprovalIdCounter = 1;
+    this.assignmentIdCounter = 1;
+    this.submissionIdCounter = 1;
+    this.quizQuestionIdCounter = 1;
     
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000 // prune expired entries every 24h
-    });
-    
-    // Init with sample data (just creating the initial admin/instructor)
-    this.createUser({
-      username: "instructor",
-      password: "password_hash_placeholder", // Will be hashed by auth service
-      email: "instructor@example.com",
-      fullName: "Demo Instructor",
-      role: "instructor"
     });
   }
 
@@ -595,6 +630,221 @@ export class MemStorage implements IStorage {
     }
     
     return approvals;
+  }
+
+  // Assignment methods
+  async getAssignment(id: number): Promise<Assignment | undefined> {
+    return this.assignments.get(id);
+  }
+
+  async getAssignmentsByCourseId(courseId: number): Promise<Assignment[]> {
+    return Array.from(this.assignments.values())
+      .filter(assignment => assignment.courseId === courseId)
+      .sort((a, b) => a.dueDate.getTime() - b.dueDate.getTime()); // Sort by due date
+  }
+
+  async createAssignment(assignment: InsertAssignment): Promise<Assignment> {
+    const id = this.assignmentIdCounter++;
+    const now = new Date();
+    
+    // Cast with proper null handling for optional fields
+    const newAssignment = {
+      id,
+      courseId: assignment.courseId,
+      title: assignment.title,
+      description: assignment.description,
+      dueDate: assignment.dueDate,
+      totalPoints: assignment.totalPoints || 100,
+      attachmentUrl: assignment.attachmentUrl ?? null,
+      assignmentType: assignment.assignmentType || "assignment",
+      createdAt: now
+    } as Assignment;
+    
+    this.assignments.set(id, newAssignment);
+    return newAssignment;
+  }
+
+  async updateAssignment(id: number, data: Partial<Assignment>): Promise<Assignment | undefined> {
+    const assignment = this.assignments.get(id);
+    if (!assignment) return undefined;
+    
+    const updatedAssignment = { ...assignment, ...data };
+    this.assignments.set(id, updatedAssignment);
+    return updatedAssignment;
+  }
+
+  async deleteAssignment(id: number): Promise<boolean> {
+    if (!this.assignments.has(id)) return false;
+    
+    // Delete associated quiz questions
+    const quizQuestions = await this.getQuizQuestionsByAssignmentId(id);
+    for (const question of quizQuestions) {
+      this.quizQuestions.delete(question.id);
+    }
+    
+    // Delete associated submissions
+    const submissions = await this.getSubmissionsByAssignmentId(id);
+    for (const submission of submissions) {
+      this.submissions.delete(submission.id);
+    }
+    
+    this.assignments.delete(id);
+    return true;
+  }
+
+  // Submission methods
+  async getSubmission(id: number): Promise<Submission | undefined> {
+    return this.submissions.get(id);
+  }
+
+  async getUserSubmissionForAssignment(userId: number, assignmentId: number): Promise<Submission | undefined> {
+    return Array.from(this.submissions.values()).find(
+      submission => submission.userId === userId && submission.assignmentId === assignmentId
+    );
+  }
+
+  async getSubmissionsByAssignmentId(assignmentId: number): Promise<Submission[]> {
+    return Array.from(this.submissions.values())
+      .filter(submission => submission.assignmentId === assignmentId)
+      .sort((a, b) => {
+        if (!a.submittedAt) return 1;
+        if (!b.submittedAt) return -1;
+        return a.submittedAt.getTime() - b.submittedAt.getTime();
+      });
+  }
+
+  async getSubmissionsByUserId(userId: number): Promise<Submission[]> {
+    return Array.from(this.submissions.values())
+      .filter(submission => submission.userId === userId)
+      .sort((a, b) => {
+        if (!a.submittedAt) return 1;
+        if (!b.submittedAt) return -1;
+        return a.submittedAt.getTime() - b.submittedAt.getTime();
+      });
+  }
+
+  async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
+    const id = this.submissionIdCounter++;
+    const now = new Date();
+    
+    // Check if the assignment exists
+    const assignment = await this.getAssignment(insertSubmission.assignmentId);
+    if (!assignment) {
+      throw new Error(`Assignment with ID ${insertSubmission.assignmentId} not found`);
+    }
+    
+    // Check if a submission already exists for this user and assignment
+    const existingSubmission = await this.getUserSubmissionForAssignment(
+      insertSubmission.userId, 
+      insertSubmission.assignmentId
+    );
+    
+    if (existingSubmission) {
+      throw new Error("A submission already exists for this assignment");
+    }
+    
+    // Check if the submission is late
+    const status = now > assignment.dueDate ? "late" : (insertSubmission.status || "submitted");
+    
+    // Cast with proper null handling for optional fields
+    const submission = {
+      id,
+      assignmentId: insertSubmission.assignmentId,
+      userId: insertSubmission.userId,
+      submissionText: insertSubmission.submissionText ?? null,
+      attachmentUrl: insertSubmission.attachmentUrl ?? null,
+      submittedAt: now,
+      grade: null,
+      feedback: null,
+      gradedBy: null,
+      gradedAt: null,
+      status
+    } as Submission;
+    
+    this.submissions.set(id, submission);
+    return submission;
+  }
+
+  async updateSubmission(id: number, data: Partial<Submission>): Promise<Submission | undefined> {
+    const submission = this.submissions.get(id);
+    if (!submission) return undefined;
+    
+    const updatedSubmission = { ...submission, ...data };
+    this.submissions.set(id, updatedSubmission);
+    return updatedSubmission;
+  }
+
+  async gradeSubmission(id: number, grade: number, feedback: string, gradedBy: number): Promise<Submission | undefined> {
+    const submission = this.submissions.get(id);
+    if (!submission) return undefined;
+    
+    const now = new Date();
+    const updatedSubmission = { 
+      ...submission, 
+      grade, 
+      feedback, 
+      gradedBy, 
+      gradedAt: now,
+      status: "graded"
+    };
+    
+    this.submissions.set(id, updatedSubmission);
+    return updatedSubmission;
+  }
+
+  // Quiz question methods
+  async getQuizQuestion(id: number): Promise<QuizQuestion | undefined> {
+    return this.quizQuestions.get(id);
+  }
+
+  async getQuizQuestionsByAssignmentId(assignmentId: number): Promise<QuizQuestion[]> {
+    return Array.from(this.quizQuestions.values())
+      .filter(question => question.assignmentId === assignmentId)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async createQuizQuestion(insertQuestion: InsertQuizQuestion): Promise<QuizQuestion> {
+    const id = this.quizQuestionIdCounter++;
+    
+    // Check if the assignment exists and is a quiz
+    const assignment = await this.getAssignment(insertQuestion.assignmentId);
+    if (!assignment) {
+      throw new Error(`Assignment with ID ${insertQuestion.assignmentId} not found`);
+    }
+    
+    if (assignment.assignmentType !== "quiz") {
+      throw new Error("Quiz questions can only be added to quiz assignments");
+    }
+    
+    // Cast with proper null handling for optional fields
+    const question = {
+      id,
+      assignmentId: insertQuestion.assignmentId,
+      questionText: insertQuestion.questionText,
+      questionType: insertQuestion.questionType || "multiple_choice",
+      options: insertQuestion.options,
+      correctAnswer: insertQuestion.correctAnswer,
+      points: insertQuestion.points || 1,
+      order: insertQuestion.order
+    } as QuizQuestion;
+    
+    this.quizQuestions.set(id, question);
+    return question;
+  }
+
+  async updateQuizQuestion(id: number, data: Partial<QuizQuestion>): Promise<QuizQuestion | undefined> {
+    const question = this.quizQuestions.get(id);
+    if (!question) return undefined;
+    
+    const updatedQuestion = { ...question, ...data };
+    this.quizQuestions.set(id, updatedQuestion);
+    return updatedQuestion;
+  }
+
+  async deleteQuizQuestion(id: number): Promise<boolean> {
+    if (!this.quizQuestions.has(id)) return false;
+    this.quizQuestions.delete(id);
+    return true;
   }
 
   async getPlatformStats(): Promise<{

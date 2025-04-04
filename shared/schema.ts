@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -221,6 +221,84 @@ export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
 
 export type PlatformSetting = typeof platformSettings.$inferSelect;
 export type InsertPlatformSetting = z.infer<typeof insertPlatformSettingSchema>;
+
+// Assignment model
+export const assignments = pgTable("assignments", {
+  id: serial("id").primaryKey(),
+  courseId: integer("course_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  dueDate: timestamp("due_date").notNull(),
+  totalPoints: integer("total_points").notNull().default(100),
+  attachmentUrl: text("attachment_url"), // Optional file attachment URL
+  assignmentType: text("assignment_type").notNull().default("assignment"), // assignment, quiz, project
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Submission model
+export const submissions = pgTable("submissions", {
+  id: serial("id").primaryKey(),
+  assignmentId: integer("assignment_id").notNull(),
+  userId: integer("user_id").notNull(),
+  submissionText: text("submission_text"),
+  attachmentUrl: text("attachment_url"),
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  grade: integer("grade"), // null until graded
+  feedback: text("feedback"),
+  gradedBy: integer("graded_by"), // instructor ID who graded
+  gradedAt: timestamp("graded_at"),
+  status: text("status").notNull().default("submitted"), // submitted, graded, late
+});
+
+// Quiz questions model for quizzes
+export const quizQuestions = pgTable("quiz_questions", {
+  id: serial("id").primaryKey(),
+  assignmentId: integer("assignment_id").notNull(), // Foreign key to assignment
+  questionText: text("question_text").notNull(),
+  questionType: text("question_type").notNull().default("multiple_choice"), // multiple_choice, true_false, short_answer
+  options: jsonb("options"), // JSON array of options for multiple choice questions
+  correctAnswer: text("correct_answer").notNull(),
+  points: integer("points").notNull().default(1),
+  order: integer("order").notNull(),
+});
+
+// Insert schemas for new models
+export const insertAssignmentSchema = createInsertSchema(assignments).pick({
+  courseId: true,
+  title: true,
+  description: true,
+  dueDate: true,
+  totalPoints: true,
+  attachmentUrl: true,
+  assignmentType: true,
+});
+
+export const insertSubmissionSchema = createInsertSchema(submissions).pick({
+  assignmentId: true,
+  userId: true,
+  submissionText: true,
+  attachmentUrl: true,
+  status: true,
+});
+
+export const insertQuizQuestionSchema = createInsertSchema(quizQuestions).pick({
+  assignmentId: true,
+  questionText: true,
+  questionType: true,
+  options: true,
+  correctAnswer: true,
+  points: true,
+  order: true,
+});
+
+export type Assignment = typeof assignments.$inferSelect;
+export type InsertAssignment = z.infer<typeof insertAssignmentSchema>;
+
+export type Submission = typeof submissions.$inferSelect;
+export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
+
+export type QuizQuestion = typeof quizQuestions.$inferSelect;
+export type InsertQuizQuestion = z.infer<typeof insertQuizQuestionSchema>;
 
 export type CourseApproval = typeof courseApprovals.$inferSelect;
 export type InsertCourseApproval = z.infer<typeof insertCourseApprovalSchema>;

@@ -49,7 +49,7 @@ async function createSampleData() {
           instructorId: instructor.id,
           category: 'Web Development',
           subcategory: 'Frontend',
-          price: 49.99,
+          price: 0,
           level: 'beginner',
           totalLectures: 20,
           totalDuration: 600,
@@ -62,7 +62,7 @@ async function createSampleData() {
           instructorId: instructor.id,
           category: 'Web Development',
           subcategory: 'React',
-          price: 89.99,
+          price: 0,
           level: 'advanced',
           totalLectures: 30,
           totalDuration: 900,
@@ -75,7 +75,7 @@ async function createSampleData() {
           instructorId: instructor.id,
           category: 'Web Development',
           subcategory: 'Backend',
-          price: 79.99,
+          price: 0,
           level: 'intermediate',
           totalLectures: 25,
           totalDuration: 750,
@@ -151,6 +151,27 @@ async function createSampleData() {
       console.log('Student created successfully:', student.username);
     }
     
+    // Create an admin
+    const existingAdmin = await storage.getUserByUsername('admin');
+    
+    let admin;
+    if (existingAdmin) {
+      console.log('Admin already exists:', existingAdmin.username);
+      admin = existingAdmin;
+    } else {
+      const hashedPassword = await hashPassword('admin123');
+      admin = await storage.createUser({
+        username: 'admin',
+        password: hashedPassword,
+        email: 'admin@example.com',
+        fullName: 'Admin User',
+        bio: 'Platform administrator',
+        avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+        role: 'admin'
+      });
+      console.log('Admin created successfully:', admin.username);
+    }
+    
     // Enroll student in first course
     const courses = await storage.getCourses({ instructorId: instructor.id });
     if (courses.length > 0) {
@@ -165,6 +186,84 @@ async function createSampleData() {
           courseId: firstCourse.id
         });
         console.log('Enrolled student in course:', firstCourse.title);
+      }
+      
+      // Create assignments for the first course
+      const assignments = await storage.getAssignmentsByCourseId(firstCourse.id);
+      if (assignments.length === 0) {
+        // Add an assignment
+        const assignment = await storage.createAssignment({
+          courseId: firstCourse.id,
+          title: 'Build a Personal Portfolio Page',
+          description: 'Create a personal portfolio page using HTML, CSS, and basic JavaScript. The page should include your bio, education, skills, and a contact form.',
+          dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks from now
+          totalPoints: 100,
+          assignmentType: 'project',
+          attachmentUrl: 'https://example.com/assignment-resources/portfolio-instructions.pdf'
+        });
+        console.log('Assignment created:', assignment.title);
+        
+        // Add a quiz assignment
+        const quizAssignment = await storage.createAssignment({
+          courseId: firstCourse.id,
+          title: 'HTML Fundamentals Quiz',
+          description: 'Test your knowledge of HTML fundamentals with this quiz.',
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+          totalPoints: 50,
+          assignmentType: 'quiz'
+        });
+        console.log('Quiz assignment created:', quizAssignment.title);
+        
+        // Add quiz questions
+        const questions = [
+          {
+            assignmentId: quizAssignment.id,
+            questionText: 'Which HTML tag is used to create a hyperlink?',
+            options: JSON.stringify(['<a>', '<link>', '<href>', '<url>']),
+            correctAnswer: '<a>',
+            points: 10
+          },
+          {
+            assignmentId: quizAssignment.id,
+            questionText: 'Which of the following is NOT a semantic HTML5 tag?',
+            options: JSON.stringify(['<div>', '<article>', '<section>', '<header>']),
+            correctAnswer: '<div>',
+            points: 10
+          },
+          {
+            assignmentId: quizAssignment.id,
+            questionText: 'What does HTML stand for?',
+            options: JSON.stringify([
+              'Hyper Text Markup Language',
+              'Hyperlinks and Text Markup Language',
+              'Home Tool Markup Language',
+              'Hyper Technology Modern Language'
+            ]),
+            correctAnswer: 'Hyper Text Markup Language',
+            points: 10
+          },
+          {
+            assignmentId: quizAssignment.id,
+            questionText: 'Which attribute is used to specify an alternate text for an image if it cannot be displayed?',
+            options: JSON.stringify(['alt', 'title', 'src', 'href']),
+            correctAnswer: 'alt',
+            points: 10
+          },
+          {
+            assignmentId: quizAssignment.id,
+            questionText: 'Which HTML element defines the title of a document?',
+            options: JSON.stringify(['<title>', '<head>', '<meta>', '<header>']),
+            correctAnswer: '<title>',
+            points: 10
+          }
+        ];
+        
+        for (const questionData of questions) {
+          const quizQuestion = await storage.createQuizQuestion(questionData);
+          console.log('Quiz question created:', quizQuestion.questionText.substring(0, 30) + '...');
+        }
+      } else {
+        console.log('Assignments already exist for course:', firstCourse.title);
       }
     }
     
