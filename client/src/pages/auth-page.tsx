@@ -367,11 +367,11 @@ export default function AuthPage() {
               
               <div className="flex items-start">
                 <div className="bg-white/20 p-2 rounded-lg mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-award"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Certificates</h3>
-                  <p className="opacity-80">Earn certificates upon course completion</p>
+                  <h3 className="text-xl font-semibold">Lifetime Access</h3>
+                  <p className="opacity-80">Access course content anytime, anywhere</p>
                 </div>
               </div>
             </div>

@@ -116,8 +116,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </Button>
               
               <Button variant="ghost" className="w-full justify-start px-4">
-                <Award className="h-5 w-5 mr-3" />
-                Certificates
+                <BookOpen className="h-5 w-5 mr-3" />
+                Resources
               </Button>
               
               {user.role === "instructor" && (

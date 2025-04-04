@@ -175,16 +175,11 @@ export default function CourseDetailPage() {
                   <div className="p-6">
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-3xl font-bold">${course.price.toFixed(2)}</span>
-                        {course.price > 0 && (
-                          <span className="text-gray-500 line-through">${(course.price * 1.3).toFixed(2)}</span>
-                        )}
+                        <span className="text-xl font-semibold">Free Access</span>
                       </div>
-                      {course.price > 0 && (
-                        <div className="text-sm text-gray-500 mb-2">
-                          <span className="text-red-500 font-medium">30% off</span> — 2 days left at this price!
-                        </div>
-                      )}
+                      <div className="text-sm text-gray-500 mb-2">
+                        Unlimited access to course content
+                      </div>
                     </div>
                     
                     {isEnrolled ? (
@@ -202,7 +197,7 @@ export default function CourseDetailPage() {
                     )}
                     
                     <div className="text-center text-sm text-gray-500 mb-6">
-                      30-Day Money-Back Guarantee
+                      All courses on our platform are free
                     </div>
                     
                     <div className="space-y-4">
@@ -222,7 +217,7 @@ export default function CourseDetailPage() {
                         </li>
                         <li className="flex items-center">
                           <Check className="h-4 w-4 mr-2 text-gray-500" />
-                          Certificate of completion
+                          Access on mobile and desktop
                         </li>
                       </ul>
                     </div>

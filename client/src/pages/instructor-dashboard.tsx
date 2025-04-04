@@ -124,7 +124,7 @@ export default function InstructorDashboard() {
       instructorId: user!.id,
       totalLectures: parseInt(values.totalLectures.toString()),
       totalDuration: parseInt(values.totalDuration.toString()),
-      price: parseFloat(values.price.toString()),
+      price: 0, // All courses are free
     });
   };
 
@@ -132,7 +132,7 @@ export default function InstructorDashboard() {
   const stats = {
     totalStudents: courses?.reduce((acc, course) => acc + (course.studentCount || 0), 0) || 0,
     totalCourses: courses?.length || 0,
-    totalRevenue: courses?.reduce((acc, course) => acc + (course.revenue || 0), 0) || 0,
+    totalLectures: courses?.reduce((acc, course) => acc + (course.totalLectures || 0), 0) || 0,
     averageRating: courses?.reduce((acc, course) => acc + course.rating, 0) / (courses?.length || 1) || 0,
   };
 
@@ -195,11 +195,11 @@ export default function InstructorDashboard() {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                      <p className="text-3xl font-bold">${stats.totalRevenue.toLocaleString()}</p>
+                      <p className="text-sm font-medium text-gray-500">Total Lectures</p>
+                      <p className="text-3xl font-bold">{stats.totalLectures.toLocaleString()}</p>
                     </div>
                     <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <DollarSign className="h-6 w-6 text-green-500" />
+                      <BookOpen className="h-6 w-6 text-green-500" />
                     </div>
                   </div>
                 </CardContent>
@@ -221,16 +221,16 @@ export default function InstructorDashboard() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Revenue Chart */}
+              {/* Course Activity Chart */}
               <Card className="md:col-span-2">
                 <CardHeader>
-                  <CardTitle>Revenue Overview</CardTitle>
-                  <CardDescription>Your earnings over the last 6 months</CardDescription>
+                  <CardTitle>Course Activity Overview</CardTitle>
+                  <CardDescription>Student enrollments over the last 6 months</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px] flex items-center justify-center">
                     <ChartBarStacked className="h-16 w-16 text-gray-300" />
-                    <p className="ml-4 text-gray-500">Revenue data visualization will appear here</p>
+                    <p className="ml-4 text-gray-500">Enrollment data visualization will appear here</p>
                   </div>
                 </CardContent>
               </Card>
@@ -342,7 +342,7 @@ export default function InstructorDashboard() {
                             </div>
                           </div>
                           <div className="p-6 bg-gray-50 flex flex-col justify-center items-center">
-                            <p className="text-lg font-bold mb-1">${course.price.toFixed(2)}</p>
+                            <p className="text-lg font-bold mb-1">{course.totalLectures} lectures</p>
                             <p className="text-sm text-gray-500">{course.level}</p>
                           </div>
                         </div>
@@ -430,24 +430,7 @@ export default function InstructorDashboard() {
                         )}
                       />
                       
-                      <FormField
-                        control={courseForm.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price ($)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="Enter course price" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <input type="hidden" name="price" value="0" />
                       
                       <FormField
                         control={courseForm.control}

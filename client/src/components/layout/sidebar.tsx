@@ -92,8 +92,8 @@ export default function Sidebar() {
           </a>
           
           <a className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 hover:text-primary">
-            <Award className="w-5 h-5 mr-2" />
-            <span>Certificates</span>
+            <BookOpen className="w-5 h-5 mr-2" />
+            <span>Resources</span>
           </a>
           
           <div className="pt-4">

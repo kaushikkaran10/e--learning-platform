@@ -24,7 +24,7 @@ export const courses = pgTable("courses", {
   instructorId: integer("instructor_id").notNull(),
   category: text("category").notNull(),
   subcategory: text("subcategory"),
-  price: real("price").notNull(),
+  price: real("price").notNull().default(0),
   level: text("level").notNull(),
   totalLectures: integer("total_lectures").notNull(),
   totalDuration: integer("total_duration").notNull(), // in minutes
@@ -99,11 +99,12 @@ export const insertCourseSchema = createInsertSchema(courses).pick({
   instructorId: true,
   category: true,
   subcategory: true,
-  price: true,
   level: true,
   totalLectures: true,
   totalDuration: true,
   status: true,
+}).extend({
+  price: z.number().default(0),
 });
 
 export const insertSectionSchema = createInsertSchema(sections).pick({
