@@ -9,23 +9,35 @@ import {
   insertLectureSchema,
   insertEnrollmentSchema, 
   insertLectureProgressSchema,
-  insertReviewSchema
+  insertReviewSchema,
+  insertAdminLogSchema,
+  insertPlatformSettingSchema,
+  insertCourseApprovalSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuth(app);
 
+  // === Admin middleware ===
+  const isAdmin = (req: any, res: any, next: any) => {
+    if (!req.isAuthenticated() || !req.user || req.user.role !== "admin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    next();
+  };
+
   // === Course routes ===
 
   // Get all courses with optional filtering
   app.get("/api/courses", async (req, res) => {
     try {
-      const { category, search, instructorId } = req.query;
+      const { category, search, instructorId, status } = req.query;
       const options: {
         category?: string;
         search?: string;
         instructorId?: number;
+        status?: string;
       } = {};
 
       if (category && typeof category === "string") {
@@ -38,6 +50,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (instructorId && typeof instructorId === "string") {
         options.instructorId = parseInt(instructorId);
+      }
+      
+      if (status && typeof status === "string") {
+        options.status = status;
       }
 
       const courses = await storage.getCourses(options);
@@ -425,6 +441,314 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid review data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create review" });
+    }
+  });
+
+  // === Admin routes ===
+
+  // Get all users (admin only)
+  app.get("/api/admin/users", isAdmin, async (req, res) => {
+    try {
+      const { role } = req.query;
+      const users = await storage.getAllUsers(typeof role === "string" ? role : undefined);
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Update user (admin only)
+  app.patch("/api/admin/users/:id", isAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const user = await storage.getUser(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const updatedUser = await storage.updateUser(userId, req.body);
+      
+      // Log the admin action
+      if (req.user) {
+        await storage.createAdminLog({
+          adminId: req.user.id,
+          action: "update_user",
+          entityType: "user",
+          entityId: userId,
+          details: `Updated user: ${user.username}`
+        });
+      }
+      
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  // Get all enrollments (admin only)
+  app.get("/api/admin/enrollments", isAdmin, async (req, res) => {
+    try {
+      const enrollments = await storage.getAllEnrollments();
+      
+      // Get user and course details for each enrollment
+      const enrichedEnrollments = await Promise.all(
+        enrollments.map(async (enrollment) => {
+          const user = await storage.getUser(enrollment.userId);
+          const course = await storage.getCourse(enrollment.courseId);
+          return { 
+            ...enrollment, 
+            user: user ? { id: user.id, username: user.username, fullName: user.fullName } : null,
+            course: course ? { id: course.id, title: course.title } : null
+          };
+        })
+      );
+      
+      res.json(enrichedEnrollments);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch enrollments" });
+    }
+  });
+
+  // Get all reviews (admin only)
+  app.get("/api/admin/reviews", isAdmin, async (req, res) => {
+    try {
+      const reviews = await storage.getAllReviews();
+      
+      // Get user and course details for each review
+      const enrichedReviews = await Promise.all(
+        reviews.map(async (review) => {
+          const user = await storage.getUser(review.userId);
+          const course = await storage.getCourse(review.courseId);
+          return { 
+            ...review, 
+            user: user ? { id: user.id, username: user.username, fullName: user.fullName } : null,
+            course: course ? { id: course.id, title: course.title } : null
+          };
+        })
+      );
+      
+      res.json(enrichedReviews);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch reviews" });
+    }
+  });
+
+  // Get admin logs (admin only)
+  app.get("/api/admin/logs", isAdmin, async (req, res) => {
+    try {
+      const { adminId, entityType, entityId } = req.query;
+      
+      const logs = await storage.getAdminLogs(
+        adminId && typeof adminId === "string" ? parseInt(adminId) : undefined,
+        entityType && typeof entityType === "string" ? entityType : undefined,
+        entityId && typeof entityId === "string" ? parseInt(entityId) : undefined
+      );
+      
+      // Get admin details for each log
+      const logsWithAdminDetails = await Promise.all(
+        logs.map(async (log) => {
+          const admin = await storage.getUser(log.adminId);
+          return {
+            ...log,
+            admin: admin ? { id: admin.id, username: admin.username, fullName: admin.fullName } : null
+          };
+        })
+      );
+      
+      res.json(logsWithAdminDetails);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch admin logs" });
+    }
+  });
+
+  // Get platform settings (admin only)
+  app.get("/api/admin/settings", isAdmin, async (req, res) => {
+    try {
+      const { category } = req.query;
+      const settings = await storage.getAllPlatformSettings(
+        typeof category === "string" ? category : undefined
+      );
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch platform settings" });
+    }
+  });
+
+  // Create or update platform setting (admin only)
+  app.post("/api/admin/settings", isAdmin, async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "User authentication required" });
+      }
+
+      const settingData = insertPlatformSettingSchema.parse({
+        ...req.body,
+        updatedBy: req.user.id
+      });
+      
+      const setting = await storage.createOrUpdatePlatformSetting(settingData);
+      
+      // Log the admin action
+      await storage.createAdminLog({
+        adminId: req.user.id,
+        action: "update_setting",
+        entityType: "platform_setting",
+        details: `Updated setting: ${setting.key}`
+      });
+      
+      res.status(201).json(setting);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid setting data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update platform setting" });
+    }
+  });
+
+  // Get course approvals (admin only)
+  app.get("/api/admin/course-approvals", isAdmin, async (req, res) => {
+    try {
+      const { status } = req.query;
+      const approvals = await storage.getCourseApprovals(
+        typeof status === "string" ? status : undefined
+      );
+      
+      // Get course details for each approval
+      const approvalsWithDetails = await Promise.all(
+        approvals.map(async (approval) => {
+          const course = await storage.getCourse(approval.courseId);
+          const reviewer = approval.reviewedBy ? await storage.getUser(approval.reviewedBy) : null;
+          
+          return {
+            ...approval,
+            course: course ? {
+              id: course.id,
+              title: course.title,
+              instructorId: course.instructorId
+            } : null,
+            reviewer: reviewer ? {
+              id: reviewer.id,
+              username: reviewer.username,
+              fullName: reviewer.fullName
+            } : null
+          };
+        })
+      );
+      
+      res.json(approvalsWithDetails);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch course approvals" });
+    }
+  });
+
+  // Create course approval (instructor submitting course for review)
+  app.post("/api/courses/:id/submit-for-approval", async (req, res) => {
+    if (!req.isAuthenticated() || req.user.role !== "instructor") {
+      return res.status(403).json({ message: "Only instructors can submit courses for approval" });
+    }
+
+    try {
+      const courseId = parseInt(req.params.id);
+      const course = await storage.getCourse(courseId);
+
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      if (course.instructorId !== req.user.id) {
+        return res.status(403).json({ message: "You can only submit your own courses for approval" });
+      }
+      
+      // Check if already submitted
+      const existingApproval = await storage.getCourseApproval(courseId);
+      if (existingApproval) {
+        return res.status(400).json({ 
+          message: "Course already submitted for approval",
+          status: existingApproval.status
+        });
+      }
+      
+      const approvalData = insertCourseApprovalSchema.parse({
+        courseId,
+        status: "pending"
+      });
+      
+      const approval = await storage.createCourseApproval(approvalData);
+      
+      // Update course status
+      await storage.updateCourse(courseId, { status: "pending_approval" });
+      
+      res.status(201).json(approval);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid approval data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to submit course for approval" });
+    }
+  });
+
+  // Update course approval (admin only)
+  app.patch("/api/admin/course-approvals/:courseId", isAdmin, async (req, res) => {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      const { status, feedback } = req.body;
+      
+      if (!status || !["approved", "rejected"].includes(status)) {
+        return res.status(400).json({ message: "Valid status (approved or rejected) is required" });
+      }
+      
+      const course = await storage.getCourse(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+      
+      const approval = await storage.getCourseApproval(courseId);
+      if (!approval) {
+        return res.status(404).json({ message: "Course approval request not found" });
+      }
+      
+      if (approval.status !== "pending") {
+        return res.status(400).json({ message: `Course already ${approval.status}` });
+      }
+      
+      if (!req.user) {
+        return res.status(401).json({ message: "User authentication required" });
+      }
+
+      const updatedApproval = await storage.updateCourseApproval(courseId, {
+        status,
+        feedback: feedback || null,
+        reviewedBy: req.user.id
+      });
+      
+      // Update course status based on approval decision
+      await storage.updateCourse(courseId, { 
+        status: status === "approved" ? "published" : "rejected" 
+      });
+      
+      // Log the admin action
+      await storage.createAdminLog({
+        adminId: req.user.id,
+        action: `course_${status}`,
+        entityType: "course",
+        entityId: courseId,
+        details: `Course ${status}: ${course.title}`
+      });
+      
+      res.json(updatedApproval);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update course approval" });
+    }
+  });
+
+  // Get platform statistics (admin only)
+  app.get("/api/admin/stats", isAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getPlatformStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch platform statistics" });
     }
   });
   

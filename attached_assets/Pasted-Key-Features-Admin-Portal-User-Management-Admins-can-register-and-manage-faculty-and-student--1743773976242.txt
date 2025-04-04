@@ -1,0 +1,39 @@
+Key Features:
+Admin Portal:
+● User Management: Admins can register and manage faculty and student accounts.
+● Course Management: Ability to create, edit, and delete courses offered in the platform.
+● Report Generation: View reports on student performance, course progress, and faculty
+activities.
+● System Monitoring: Track platform usage, handle support requests, and manage
+platform-wide settings.
+● Announcements: Broadcast notifications or updates to students and faculty.
+Faculty Portal:
+● Course Creation & Management: Faculty can create and update course content,
+including lectures, PDFs, and video lessons.
+● Assignment & Quiz Management: Upload assignments, set deadlines, and create
+quizzes with auto-grading options.
+● Student Performance Tracking: View student progress, grade assignments, and
+provide feedback.
+● Notifications & Reminders: Send important announcements regarding classes,
+assignments, and exams.
+Student Portal:
+● User Registration & Authentication: Secure login using college credentials.
+● Course Enrolment: Browse available courses and enroll in desired subjects.
+● Lecture Access: View recorded lectures, live classes, and course materials of the
+enrolled courses.
+● Assignment Submission: Submit assignments online before deadlines and track
+pending submissions.
+● Quiz & Exam Participation: Take online quizzes, view results, and track academic
+progress.
+● Grades & Feedback: Access grades, faculty feedback, and performance analytics.
+● Push Notifications: Get alerts for upcoming classes, due assignments, and
+announcements.
+Bonus Features:
+● AI-based Course Recommendations: Suggest courses based on student interests and
+past enrollments.
+● Gamification & Leaderboard: Introduce achievement badges and rankings to
+encourage participation.
+● Offline Access: Allow students to download course materials for offline study.
+● Student-Faculty Chat: Enable direct communication between students and faculty for
+academic support.
+● Plagiarism Detection: Integrate tools to check for plagiarism in assignments.

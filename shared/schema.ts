@@ -11,7 +11,7 @@ export const users = pgTable("users", {
   fullName: text("full_name").notNull(),
   bio: text("bio"),
   avatarUrl: text("avatar_url"),
-  role: text("role").notNull().default("student"), // student or instructor
+  role: text("role").notNull().default("student"), // student, instructor, or admin
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -30,6 +30,7 @@ export const courses = pgTable("courses", {
   totalDuration: integer("total_duration").notNull(), // in minutes
   rating: real("rating").default(0),
   reviewCount: integer("review_count").default(0),
+  status: text("status").default("draft"), // draft, pending_approval, published, rejected
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -102,6 +103,7 @@ export const insertCourseSchema = createInsertSchema(courses).pick({
   level: true,
   totalLectures: true,
   totalDuration: true,
+  status: true,
 });
 
 export const insertSectionSchema = createInsertSchema(sections).pick({
@@ -155,5 +157,69 @@ export type InsertEnrollment = z.infer<typeof insertEnrollmentSchema>;
 export type LectureProgress = typeof lectureProgress.$inferSelect;
 export type InsertLectureProgress = z.infer<typeof insertLectureProgressSchema>;
 
+// Admin log model
+export const adminLogs = pgTable("admin_logs", {
+  id: serial("id").primaryKey(),
+  adminId: integer("admin_id").notNull(),
+  action: text("action").notNull(),
+  entityType: text("entity_type").notNull(), // user, course, etc.
+  entityId: integer("entity_id"), // Can be null for global actions
+  details: text("details"), // JSON string with additional details
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Platform settings model
+export const platformSettings = pgTable("platform_settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  category: text("category").notNull(),
+  updatedBy: integer("updated_by").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Course approval status
+export const courseApprovals = pgTable("course_approvals", {
+  id: serial("id").primaryKey(),
+  courseId: integer("course_id").notNull().unique(),
+  status: text("status").notNull().default("pending"), // pending, approved, rejected
+  reviewedBy: integer("reviewed_by"), // admin ID who reviewed
+  reviewedAt: timestamp("reviewed_at"),
+  feedback: text("feedback"), // Feedback for instructor if rejected
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Add Zod schemas for new models
+export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
+  adminId: true,
+  action: true,
+  entityType: true,
+  entityId: true,
+  details: true,
+});
+
+export const insertPlatformSettingSchema = createInsertSchema(platformSettings).pick({
+  key: true,
+  value: true,
+  category: true,
+  updatedBy: true,
+});
+
+export const insertCourseApprovalSchema = createInsertSchema(courseApprovals).pick({
+  courseId: true,
+  status: true,
+  reviewedBy: true,
+  feedback: true,
+});
+
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = z.infer<typeof insertReviewSchema>;
+
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
+
+export type PlatformSetting = typeof platformSettings.$inferSelect;
+export type InsertPlatformSetting = z.infer<typeof insertPlatformSettingSchema>;
+
+export type CourseApproval = typeof courseApprovals.$inferSelect;
+export type InsertCourseApproval = z.infer<typeof insertCourseApprovalSchema>;
