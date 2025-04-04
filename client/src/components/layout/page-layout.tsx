@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Header from "./header";
+import AnimatedHeader from "./animated-header";
 import Sidebar from "./sidebar";
 import Footer from "./footer";
 import MobileMenu from "./mobile-menu";
@@ -18,7 +19,7 @@ export default function PageLayout({ children, showSidebar = true }: PageLayoutP
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onMobileMenuToggle={toggleMobileMenu} />
+      <AnimatedHeader onMobileMenuToggle={toggleMobileMenu} />
       
       <div className="flex flex-1">
         {showSidebar && <Sidebar />}

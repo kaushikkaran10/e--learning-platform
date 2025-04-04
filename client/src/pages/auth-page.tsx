@@ -32,7 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, GraduationCap } from "lucide-react";
+import { GraduationCap } from "lucide-react";
+import { FluidSpinner } from "@/components/ui/fluid-spinner";
+import { ThemedSpinner } from "@/components/ui/themed-spinner";
 import { Link } from "wouter";
 
 // Login form schema
@@ -174,7 +176,7 @@ export default function AuthPage() {
                         >
                           {loginMutation.isPending ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <ThemedSpinner theme="graduate" size="sm" className="mr-2" />
                               Logging in...
                             </>
                           ) : "Sign In"}
@@ -309,7 +311,7 @@ export default function AuthPage() {
                         >
                           {registerMutation.isPending ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <FluidSpinner theme="code" size={18} className="mr-2" />
                               Creating account...
                             </>
                           ) : "Sign Up"}

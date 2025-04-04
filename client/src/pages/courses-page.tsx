@@ -6,6 +6,8 @@ import PageLayout from "@/components/layout/page-layout";
 import CourseCard from "@/components/course/course-card";
 import CourseFilter from "@/components/course/course-filter";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FluidSpinner } from "@/components/ui/fluid-spinner";
+import { ThemedSkeleton } from "@/components/ui/themed-spinner";
 
 export default function CoursesPage() {
   const search = useSearch();
@@ -94,20 +96,36 @@ export default function CoursesPage() {
           {/* Course list */}
           <div className="flex-1">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {/* Loading skeletons */}
-                {Array(6).fill(0).map((_, i) => (
-                  <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="h-40 bg-gray-200 animate-pulse"></div>
-                    <div className="p-4 space-y-3">
-                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
-                      <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="flex flex-col items-center justify-center p-8">
+                  <FluidSpinner 
+                    theme="book" 
+                    size={80} 
+                    text="Loading course catalog..." 
+                    className="mb-10"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {/* Themed loading skeletons */}
+                  {Array(6).fill(0).map((_, i) => {
+                    // Randomly select a theme for each card to make it more playful
+                    const themes = ["book", "pencil", "science", "math", "art", "code", "graduate", "lightbulb"];
+                    const randomTheme = themes[Math.floor(Math.random() * themes.length)] as any;
+                    
+                    return (
+                      <div key={i} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <ThemedSkeleton theme={randomTheme} className="h-40" />
+                        <div className="p-4 space-y-3">
+                          <ThemedSkeleton theme={randomTheme} className="h-4 rounded" />
+                          <ThemedSkeleton theme={randomTheme} className="h-8 rounded" />
+                          <ThemedSkeleton theme={randomTheme} className="h-4 rounded w-3/4" />
+                          <ThemedSkeleton theme={randomTheme} className="h-10 rounded" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             ) : courses && courses.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {courses.map((course) => (
