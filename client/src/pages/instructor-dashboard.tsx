@@ -336,7 +336,7 @@ export default function InstructorDashboard() {
                                 <Button variant="outline" size="sm">View</Button>
                               </Link>
                               <Button variant="outline" size="sm">Edit</Button>
-                              <Link href={`/instructor/course/${course.id}/curriculum`}>
+                              <Link href={`/courses/manage/${course.id}`}>
                                 <Button variant="outline" size="sm">Manage Content</Button>
                               </Link>
                             </div>
