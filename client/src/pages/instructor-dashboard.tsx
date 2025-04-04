@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -130,10 +130,10 @@ export default function InstructorDashboard() {
 
   // Simple dashboard stats
   const stats = {
-    totalStudents: courses?.reduce((acc, course) => acc + (course.studentCount || 0), 0) || 0,
+    totalStudents: courses?.reduce((acc: number, course: any) => acc + (course.studentCount || 0), 0) || 0,
     totalCourses: courses?.length || 0,
-    totalLectures: courses?.reduce((acc, course) => acc + (course.totalLectures || 0), 0) || 0,
-    averageRating: courses?.reduce((acc, course) => acc + course.rating, 0) / (courses?.length || 1) || 0,
+    totalLectures: courses?.reduce((acc: number, course: any) => acc + (course.totalLectures || 0), 0) || 0,
+    averageRating: courses?.reduce((acc: number, course: any) => acc + course.rating, 0) / (courses?.length || 1) || 0,
   };
 
   return (
@@ -247,9 +247,9 @@ export default function InstructorDashboard() {
                       <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-400" />
                       <p className="mt-2 text-sm text-gray-500">Loading courses...</p>
                     </div>
-                  ) : courses && courses.length > 0 ? (
+                  ) : courses && (courses as any[]).length > 0 ? (
                     <ul className="space-y-4">
-                      {courses.slice(0, 3).map((course) => (
+                      {(courses as any[]).slice(0, 3).map((course: any) => (
                         <li key={course.id} className="flex items-center justify-between">
                           <div>
                             <p className="font-medium">{course.title}</p>
@@ -308,9 +308,9 @@ export default function InstructorDashboard() {
                     </Card>
                   ))}
                 </div>
-              ) : courses && courses.length > 0 ? (
+              ) : courses && (courses as any[]).length > 0 ? (
                 <div className="space-y-4">
-                  {courses.map((course) => (
+                  {(courses as any[]).map((course: any) => (
                     <Card key={course.id} className="overflow-hidden">
                       <CardContent className="p-0">
                         <div className="flex flex-col sm:flex-row items-center sm:items-stretch">
@@ -423,7 +423,7 @@ export default function InstructorDashboard() {
                           <FormItem>
                             <FormLabel>Subcategory</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter subcategory (optional)" {...field} />
+                              <Input placeholder="Enter subcategory (optional)" {...field} value={field.value || ''} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -501,7 +501,7 @@ export default function InstructorDashboard() {
                           <FormItem>
                             <FormLabel>Course Image URL</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter image URL" {...field} />
+                              <Input placeholder="Enter image URL" {...field} value={field.value || ''} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
