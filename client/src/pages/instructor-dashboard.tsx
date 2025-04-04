@@ -58,7 +58,7 @@ export default function InstructorDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("dashboard");
-  
+
   // Redirect if not an instructor
   useEffect(() => {
     if (user && user.role !== "instructor") {
@@ -152,14 +152,14 @@ export default function InstructorDashboard() {
             Create New Course
           </Button>
         </div>
-        
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid grid-cols-3 w-full max-w-md">
             <TabsTrigger value="dashboard">Overview</TabsTrigger>
             <TabsTrigger value="courses">My Courses</TabsTrigger>
             <TabsTrigger value="create">Create Course</TabsTrigger>
           </TabsList>
-          
+
           {/* Dashboard Overview */}
           <TabsContent value="dashboard">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -176,7 +176,7 @@ export default function InstructorDashboard() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
@@ -190,7 +190,7 @@ export default function InstructorDashboard() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
@@ -204,7 +204,7 @@ export default function InstructorDashboard() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
@@ -219,7 +219,7 @@ export default function InstructorDashboard() {
                 </CardContent>
               </Card>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Course Activity Chart */}
               <Card className="md:col-span-2">
@@ -234,7 +234,7 @@ export default function InstructorDashboard() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               {/* Top performing courses */}
               <Card>
                 <CardHeader>
@@ -267,9 +267,9 @@ export default function InstructorDashboard() {
                       <p className="text-gray-500">No courses found</p>
                     </div>
                   )}
-                  
+
                   <Separator className="my-4" />
-                  
+
                   <Button variant="ghost" size="sm" className="w-full text-primary justify-between" onClick={() => setActiveTab("courses")}>
                     View all courses
                     <ChevronRight className="h-4 w-4" />
@@ -278,7 +278,7 @@ export default function InstructorDashboard() {
               </Card>
             </div>
           </TabsContent>
-          
+
           {/* My Courses */}
           <TabsContent value="courses">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
@@ -289,7 +289,7 @@ export default function InstructorDashboard() {
                   Create New Course
                 </Button>
               </div>
-              
+
               {isLoadingCourses ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
@@ -363,7 +363,7 @@ export default function InstructorDashboard() {
               )}
             </div>
           </TabsContent>
-          
+
           {/* Create Course */}
           <TabsContent value="create">
             <Card>
@@ -388,7 +388,7 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="category"
@@ -415,7 +415,7 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="subcategory"
@@ -429,9 +429,9 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <input type="hidden" name="price" value="0" />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="level"
@@ -455,7 +455,7 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="totalLectures"
@@ -474,7 +474,7 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="totalDuration"
@@ -493,7 +493,7 @@ export default function InstructorDashboard() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={courseForm.control}
                         name="imageUrl"
@@ -508,7 +508,7 @@ export default function InstructorDashboard() {
                         )}
                       />
                     </div>
-                    
+
                     <FormField
                       control={courseForm.control}
                       name="description"
@@ -526,7 +526,7 @@ export default function InstructorDashboard() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <div className="flex justify-end space-x-2">
                       <Button 
                         variant="outline" 
