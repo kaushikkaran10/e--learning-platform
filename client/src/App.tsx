@@ -28,6 +28,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/" component={HomePage} />
       <Route path="/courses" component={CoursesPage} />
+      <ProtectedRoute path="/courses/manage/:id" component={CourseManagePage} />
       <Route path="/courses/:id" component={CourseDetailPage} />
       <ProtectedRoute path="/learn/:id" component={CourseLearnPage} />
       <ProtectedRoute path="/my-learning" component={MyLearningPage} />
@@ -37,7 +38,6 @@ function Router() {
       <Route path="/student-resources" component={StudentResources} />
       <Route path="/instructor-resources" component={InstructorResources} />
       <Route path="/course-categories" component={CourseCategories} />
-      <ProtectedRoute path="/courses/manage/:id" component={CourseManagePage} />
       <Route path="/ui/spinners" component={SpinnerDemoPage} />
       <Route component={NotFound} />
     </Switch>

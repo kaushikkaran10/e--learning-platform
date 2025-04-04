@@ -3,7 +3,6 @@ import { useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -35,7 +34,6 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
   const [selectedCategory, setSelectedCategory] = useState(params.get("category") || "all");
   const [selectedSubcategory, setSelectedSubcategory] = useState(params.get("subcategory") || "all-subcategories");
   const [selectedLevel, setSelectedLevel] = useState(params.get("level") || "all-levels");
-  const [priceRange, setPriceRange] = useState<number[]>([0, 100]);
   const [freeOnly, setFreeOnly] = useState(params.get("free") === "true");
 
   // Get subcategories for selected category
@@ -51,14 +49,13 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
   };
 
   const applyFilters = () => {
-    const filters: Record<string, string | boolean | number[]> = {};
+    const filters: Record<string, string | boolean> = {};
     
     if (searchTerm) filters.search = searchTerm;
     if (selectedCategory && selectedCategory !== "all") filters.category = selectedCategory;
     if (selectedSubcategory && selectedSubcategory !== "all-subcategories") filters.subcategory = selectedSubcategory;
     if (selectedLevel && selectedLevel !== "all-levels") filters.level = selectedLevel;
     if (freeOnly) filters.free = true;
-    filters.priceRange = priceRange;
     
     onFilterChange(filters);
     
@@ -78,7 +75,6 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
     setSelectedCategory("all");
     setSelectedSubcategory("all-subcategories");
     setSelectedLevel("all-levels");
-    setPriceRange([0, 100]);
     setFreeOnly(false);
     
     onFilterChange({});
@@ -158,23 +154,6 @@ export default function CourseFilter({ onFilterChange }: CourseFilterProps) {
               ))}
             </SelectContent>
           </Select>
-        </div>
-        
-        <div>
-          <Label>Price Range</Label>
-          <div className="mt-6 px-2">
-            <Slider
-              value={priceRange}
-              min={0}
-              max={100}
-              step={5}
-              onValueChange={setPriceRange}
-            />
-          </div>
-          <div className="flex justify-between mt-2 text-sm text-gray-500">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
-          </div>
         </div>
         
         <div className="flex items-center space-x-2">
