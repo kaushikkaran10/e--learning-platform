@@ -32,7 +32,7 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
         <div className="flex-shrink-0 flex items-center">
           <Link href="/" className="text-2xl font-bold text-primary flex items-center">
             <GraduationCap className="mr-2" />
-            <span>EduLearn</span>
+            <span>eduNest</span>
           </Link>
         </div>
 
@@ -71,7 +71,7 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
           {user && user.role === "instructor" && (
             <Link href="/instructor/dashboard">
               <Button variant="ghost" className={location.startsWith("/instructor") ? "text-primary" : ""}>
-                Teach
+                Instructor
               </Button>
             </Link>
           )}
@@ -110,7 +110,7 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
                   <DropdownMenuItem asChild>
                     <Link href="/instructor/dashboard" className="flex items-center cursor-pointer">
                       <ChartBarStacked className="mr-2 h-4 w-4" />
-                      <span>Instructor Dashboard</span>
+                      <span>Instructor Portal</span>
                     </Link>
                   </DropdownMenuItem>
                 )}

@@ -64,34 +64,46 @@ export default function Sidebar() {
             Main Navigation
           </h2>
           
-          <Link href="/">
-            <a className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+          <Link 
+            href="/"
+            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
               location === "/" ? "bg-gray-100 text-primary" : "text-gray-700 hover:bg-gray-50 hover:text-primary"
-            }`}>
-              <Home className="w-5 h-5 mr-2" />
-              <span>Dashboard</span>
-            </a>
+            }`}
+          >
+            <Home className="w-5 h-5 mr-2" />
+            <span>Dashboard</span>
           </Link>
           
-          <Link href="/my-learning">
-            <a className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+          <Link 
+            href="/my-learning"
+            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
               location === "/my-learning" ? "bg-gray-100 text-primary" : "text-gray-700 hover:bg-gray-50 hover:text-primary"
-            }`}>
-              <BookOpen className="w-5 h-5 mr-2" />
-              <span>My Courses</span>
-            </a>
+            }`}
+          >
+            <BookOpen className="w-5 h-5 mr-2" />
+            <span>My Courses</span>
           </Link>
           
-          <a className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 hover:text-primary">
+          <Link 
+            href="/calendar"
+            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+              location === "/calendar" ? "bg-gray-100 text-primary" : "text-gray-700 hover:bg-gray-50 hover:text-primary"
+            }`}
+          >
             <Calendar className="w-5 h-5 mr-2" />
             <span>Calendar</span>
-          </a>
+          </Link>
           
-          <a className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 hover:text-primary">
+          <Link 
+            href="/messages"
+            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+              location === "/messages" ? "bg-gray-100 text-primary" : "text-gray-700 hover:bg-gray-50 hover:text-primary"
+            }`}
+          >
             <MessageSquare className="w-5 h-5 mr-2" />
             <span>Messages</span>
             <span className="ml-auto bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">3</span>
-          </a>
+          </Link>
           
           <a className="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50 hover:text-primary">
             <Files className="w-5 h-5 mr-2" />
@@ -123,10 +135,12 @@ export default function Sidebar() {
                 {expandedCategory === category.name && category.subcategories && (
                   <div className="pl-8 space-y-1">
                     {category.subcategories.map((subcategory) => (
-                      <Link key={subcategory} href={`/courses?category=${category.name.toLowerCase()}&subcategory=${subcategory.toLowerCase()}`}>
-                        <a className="block px-3 py-1 text-sm text-gray-600 rounded-md hover:bg-gray-50 hover:text-primary">
-                          {subcategory}
-                        </a>
+                      <Link 
+                        key={subcategory} 
+                        href={`/courses?category=${category.name.toLowerCase()}&subcategory=${subcategory.toLowerCase()}`}
+                        className="block px-3 py-1 text-sm text-gray-600 rounded-md hover:bg-gray-50 hover:text-primary"
+                      >
+                        {subcategory}
                       </Link>
                     ))}
                   </div>
@@ -134,11 +148,12 @@ export default function Sidebar() {
               </div>
             ))}
             
-            <Link href="/courses">
-              <a className="mt-2 flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-primary">
-                <MoreHorizontal className="w-5 h-5 mr-2" />
-                <span>View All Categories</span>
-              </a>
+            <Link 
+              href="/courses"
+              className="mt-2 flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-primary"
+            >
+              <MoreHorizontal className="w-5 h-5 mr-2" />
+              <span>View All Categories</span>
             </Link>
           </div>
         </div>

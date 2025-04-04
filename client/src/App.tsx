@@ -15,6 +15,8 @@ import CourseLearnPage from "@/pages/course-learn-page";
 import MyLearningPage from "@/pages/my-learning-page";
 import InstructorDashboard from "@/pages/instructor-dashboard";
 import SpinnerDemoPage from "@/pages/spinner-demo-page";
+import MessagingPage from "@/pages/messaging-page";
+import CalendarPage from "@/pages/calendar-page";
 
 function Router() {
   return (
@@ -26,6 +28,8 @@ function Router() {
       <ProtectedRoute path="/learn/:id" component={CourseLearnPage} />
       <ProtectedRoute path="/my-learning" component={MyLearningPage} />
       <ProtectedRoute path="/instructor/dashboard" component={InstructorDashboard} />
+      <ProtectedRoute path="/messages" component={MessagingPage} />
+      <ProtectedRoute path="/calendar" component={CalendarPage} />
       <Route path="/ui/spinners" component={SpinnerDemoPage} />
       <Route component={NotFound} />
     </Switch>

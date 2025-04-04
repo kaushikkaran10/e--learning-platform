@@ -110,7 +110,7 @@ export default function AuthPage() {
         <div className="container flex justify-center md:justify-start">
           <Link href="/" className="text-2xl font-bold text-primary flex items-center">
             <GraduationCap className="mr-2" />
-            <span>EduLearn</span>
+            <span>eduNest</span>
           </Link>
         </div>
       </header>

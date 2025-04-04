@@ -64,7 +64,7 @@ export default function AnimatedHeader({ onMobileMenuToggle }: AnimatedHeaderPro
               theme === "art" && "scale-110 rotate-12",
             )} />
           </div>
-          <span className="text-xl font-bold">LearnHub</span>
+          <span className="text-xl font-bold">eduNest</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6 mx-6">
@@ -101,7 +101,7 @@ export default function AnimatedHeader({ onMobileMenuToggle }: AnimatedHeaderPro
                     location.includes("/instructor") ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
-                  Instructor Dashboard
+                  Instructor Portal
                 </Link>
               )}
             </>
@@ -140,7 +140,7 @@ export default function AnimatedHeader({ onMobileMenuToggle }: AnimatedHeaderPro
                 </DropdownMenuItem>
                 {user.role === "instructor" && (
                   <DropdownMenuItem asChild>
-                    <Link href="/instructor/dashboard">Instructor Dashboard</Link>
+                    <Link href="/instructor/dashboard">Instructor Portal</Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem asChild>

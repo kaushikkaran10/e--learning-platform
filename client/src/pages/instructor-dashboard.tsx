@@ -141,8 +141,8 @@ export default function InstructorDashboard() {
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">Instructor Dashboard</h1>
-            <p className="text-gray-600">Manage your courses and track your performance</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">Instructor Portal</h1>
+            <p className="text-gray-600">Create and manage your courses, assignments, and student progress</p>
           </div>
           <Button 
             onClick={() => setActiveTab("create")} 
