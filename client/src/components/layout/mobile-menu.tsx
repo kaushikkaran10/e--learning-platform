@@ -92,17 +92,19 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           
           {user && (
             <>
-              <SheetClose asChild>
-                <Link href="/my-learning">
-                  <Button 
-                    variant="ghost" 
-                    className={`w-full justify-start px-4 ${location === "/my-learning" ? "bg-gray-100 text-primary" : ""}`}
-                  >
-                    <ChartBarStacked className="h-5 w-5 mr-3" />
-                    My Learning
-                  </Button>
-                </Link>
-              </SheetClose>
+              {user.role !== "instructor" && (
+                <SheetClose asChild>
+                  <Link href="/my-learning">
+                    <Button 
+                      variant="ghost" 
+                      className={`w-full justify-start px-4 ${location === "/my-learning" ? "bg-gray-100 text-primary" : ""}`}
+                    >
+                      <ChartBarStacked className="h-5 w-5 mr-3" />
+                      My Learning
+                    </Button>
+                  </Link>
+                </SheetClose>
+              )}
               
               <Button variant="ghost" className="w-full justify-start px-4">
                 <Calendar className="h-5 w-5 mr-3" />

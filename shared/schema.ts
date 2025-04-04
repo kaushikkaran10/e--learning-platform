@@ -48,9 +48,12 @@ export const lectures = pgTable("lectures", {
   sectionId: integer("section_id").notNull(),
   title: text("title").notNull(),
   description: text("description"),
-  videoUrl: text("video_url").notNull(),
+  content: text("content"),
+  videoUrl: text("video_url"),
+  fileUrl: text("file_url"),
   duration: integer("duration").notNull(), // in minutes
   order: integer("order").notNull(),
+  isPublished: boolean("is_published").default(false),
 });
 
 // Enrollment model
@@ -117,9 +120,12 @@ export const insertLectureSchema = createInsertSchema(lectures).pick({
   sectionId: true,
   title: true,
   description: true,
+  content: true,
   videoUrl: true,
+  fileUrl: true,
   duration: true,
   order: true,
+  isPublished: true,
 });
 
 export const insertEnrollmentSchema = createInsertSchema(enrollments).pick({

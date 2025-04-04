@@ -60,7 +60,7 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
             </Button>
           </Link>
           
-          {user && (
+          {user && user.role !== "instructor" && (
             <Link href="/my-learning">
               <Button variant="ghost" className={location === "/my-learning" ? "text-primary" : ""}>
                 My Learning
@@ -100,12 +100,14 @@ export default function Header({ onMobileMenuToggle }: { onMobileMenuToggle?: ()
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/my-learning" className="flex items-center cursor-pointer">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    <span>My Learning</span>
-                  </Link>
-                </DropdownMenuItem>
+                {user.role !== "instructor" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/my-learning" className="flex items-center cursor-pointer">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <span>My Learning</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 {user.role === "instructor" && (
                   <DropdownMenuItem asChild>
                     <Link href="/instructor/dashboard" className="flex items-center cursor-pointer">

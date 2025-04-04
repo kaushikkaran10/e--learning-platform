@@ -61,6 +61,7 @@ const lectureFormSchema = insertLectureSchema.extend({
   videoUrl: z.string().optional(),
   fileUrl: z.string().optional(),
   duration: z.number().min(1, "Duration must be greater than 0"),
+  isPublished: z.boolean().default(false),
 });
 
 const sectionFormSchema = insertSectionSchema.extend({
