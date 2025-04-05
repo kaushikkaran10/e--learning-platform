@@ -56,7 +56,7 @@ export default function Footer() {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Students</h3>
             <ul className="space-y-2">
@@ -67,7 +67,7 @@ export default function Footer() {
               <li><a href="#" className="text-gray-400 hover:text-white">Success Stories</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">Instructors</h3>
             <ul className="space-y-2">
@@ -78,7 +78,7 @@ export default function Footer() {
               <li><a href="#" className="text-gray-400 hover:text-white">Success Stories</a></li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold mb-4">About</h3>
             <ul className="space-y-2">
@@ -90,9 +90,9 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© {new Date().getFullYear()} EduLearn. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">© {new Date().getFullYear()} eduNest. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex items-center space-x-4">
             <div className="flex items-center">
               <span className="text-gray-400 text-sm mr-2">Language:</span>
