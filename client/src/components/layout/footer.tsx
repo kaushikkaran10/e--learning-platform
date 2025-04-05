@@ -17,7 +17,7 @@ export default function Footer() {
             <Link href="/">
               <a className="text-2xl font-bold flex items-center mb-4">
                 <GraduationCap className="mr-2" />
-                <span>EduLearn</span>
+                <span>eduNest</span>
               </a>
             </Link>
             <p className="text-gray-400 mb-4 max-w-md">
