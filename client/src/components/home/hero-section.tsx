@@ -70,7 +70,7 @@ export default function HeroSection() {
                 Master new skills & boost your career
               </h1>
               <p className="text-lg opacity-90 mb-8">
-                Learn from experts today!
+                Learn from your teachers anytime, anywhere!
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/courses">
