@@ -715,14 +715,15 @@ export default function CourseManagePage() {
                                       <div>
                                         <FileUpload 
                                           endpoint="video"
-                                          label="Upload Video File"
+                                          label="Upload Video File (MP4, WEBM, AVI, MOV)"
+                                          accept=".mp4,.webm,.avi,.mov"
                                           onUploadComplete={(fileUrl) => {
                                             field.onChange(fileUrl);
                                             lectureForm.setValue('videoUrl', fileUrl);
                                           }}
                                         />
                                       </div>
-                                      <div className="- mt-2">
+                                      <div className="mt-2">
                                         <FormLabel className="text-sm font-normal">OR enter a URL</FormLabel>
                                         <FormControl>
                                           <Input 
